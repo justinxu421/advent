@@ -1,80 +1,83 @@
 from collections import Counter, defaultdict
-import copy
+from utils import print_d
 
-def count_neighbors(a, x, y):
+# generate DIRS
+DIRS = [(i,j) for i in range(-1, 2) for j in range(-1,2) if (i,j) != (0,0)]
+
+def count(d):
+    return sum(1 for x in d.values() if x == '#')
+
+def count_neighbors(d, x, y):
+    return sum(1 for i,j in DIRS if d.get((x+i,y+j), 0) == '#')
+
+def next_iter(d, count_neighbors, m_):
+    new_d = {}
+
+    for (x,y), v in d.items():
+        n = count_neighbors(d, x, y)
+        if v == 'L' and n == 0:
+            new_d[(x,y)] = '#'
+        elif v == '#' and n >= m_:
+            new_d[(x,y)] = 'L'
+        else:
+            new_d[(x,y)] = v
+
+    return new_d
+
+def p1(d):
+    while True:
+        new_d = next_iter(d, count_neighbors, 4)
+
+        if new_d == d:
+            break
+        d = new_d
+    
+    return count(new_d)
+
+def count_neighbors_2(d, x, y):
     total = 0
-    for i in [-1, 0, 1]:
-        for j in [-1, 0, 1]:
-            if i != 0 or j != 0:
-                x_, y_ = x+i, y+j
-                if 0 <= x_ < len(a) and 0 <= y_ < len(a[0]) and a[x_][y_] == '#':
-                    total += 1
+    for i,j in DIRS:
+        x_, y_ = x+i, y+j
+
+        # skip floors
+        while d.get((x_,y_), 0) == '.':
+            x_ += i
+            y_ += j
+
+        if d.get((x_,y_), 0) == '#':
+            total += 1
+
     return total
 
-def count(a):
-    count = 0
+def p2(d):
+    while True:
+        new_d = next_iter(d, count_neighbors_2, 5)
+
+        if new_d == d:
+            break
+        d = new_d
+    
+    return count(new_d)
+
+def gen_dict(a):
+    d = {}
     for i in range(len(a)):
         for j in range(len(a[0])):
-            if a[i][j] == '#':
-                count += 1
-    return count
-
-def p1(a):
-    prev = None
-   
-    while prev != a:
-        new_a = copy.deepcopy(a)
-        for i in range(len(a)):
-            for j in range(len(a[0])):
-                n = count_neighbors(a, i, j)
-                if a[i][j] == 'L' and n == 0:
-                    new_a[i][j] = '#'
-                elif a[i][j] == '#' and n >= 4:
-                    new_a[i][j] = 'L'
-
-        prev = a
-        a = new_a
-    
-    return count(new_a), count(a)
-
-def count_neighbors_2(a, x, y):
-    total = 0
-    for i in [-1, 0, 1]:
-        for j in [-1, 0, 1]:
-            if i != 0 or j != 0:
-                x_, y_ = x+i, y+j
-                # skip floor
-                while 0 <= x_ < len(a) and 0 <= y_ < len(a[0]) and a[x_][y_] == '.':
-                    x_, y_ = x_+i, y_+j
-                if 0 <= x_ < len(a) and 0 <= y_ < len(a[0]) and a[x_][y_] == '#':
-                    total += 1
-    return total
-
-def p2(a):
-    prev = None
-   
-    while prev != a:
-        new_a = copy.deepcopy(a)
-        for i in range(len(a)):
-            for j in range(len(a[0])):
-                n = count_neighbors_2(a, i, j)
-                if a[i][j] == 'L' and n == 0:
-                    new_a[i][j] = '#'
-                elif a[i][j] == '#' and n >= 5:
-                    new_a[i][j] = 'L'
-
-        prev = a
-        a = new_a
-    
-    return count(new_a), count(a)
+            d[i,j] = a[i][j]
+    return d
 
 ### insert how to parse line
 def parse_line(line):
     return list(line.strip())
 
-with open('input11.txt') as f:
-    a = [parse_line(line) for line in f] 
+def main():
+    with open('input11.txt') as f:
+        a = [parse_line(line) for line in f] 
+        a = gen_dict(a)
+        print_d(a)
 
-    print(f'part one: {p1(a)}')
-    print(f'part two: {p2(a)}')
+        print(f'part one: {p1(a)}')
+        print(f'part two: {p2(a)}')
 
+if __name__ == "__main__":
+    main()
