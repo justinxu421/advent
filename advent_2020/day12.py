@@ -1,37 +1,34 @@
 from collections import Counter, defaultdict
 from utils import print_d
 
-# generate DIRS
-DIRS = [(i,j) for i in range(-1, 2) for j in range(-1,2) if (i,j) != (0,0)]
 dir_map = {'N': 0, 'E': 1, 'S': 2, 'W':3}
-dir_map_inv = {0:'N', 1:'E', 2:'S', 3:'W'}
+#dir_map_inv = {0:'N', 1:'E', 2:'S', 3:'W'}
+
+def move_dir(i, j, d, num):
+    m_ = [(1,0), (0,1), (-1,0), (0,-1)]
+    return i + num * m_[d][0], j + num * m_[d][1]
 
 def parse_dir(d_, num, i, j, d):
-    if d_ == 'N':
-        return i+num, j, d
-    elif d_ == 'S':
-        return i-num, j, d
-    elif d_ == 'E':
-        return i, j+num, d
-    elif d_ == 'W':
-        return i, j-num, d
+    if d_ in ['N', 'E', 'S', 'W']:
+        i_, j_ = move_dir(i, j, dir_map[d_], num)
+        return i_, j_, d
     elif d_ == 'R':
         steps = num // 90
-        new_dir = (dir_map[d] + steps) % 4
-        return i, j, dir_map_inv[new_dir]
+        new_dir = (d + steps) % 4
+        return i, j, new_dir
     elif d_ == 'L':
         steps = (360 - num) // 90
-        new_dir = (dir_map[d] + steps) % 4
-        return i, j, dir_map_inv[new_dir]
+        new_dir = (d + steps) % 4
+        return i, j, new_dir
     elif d_ == 'F':
-        return parse_dir(d, num, i, j, d)
+        i_, j_ = move_dir(i, j, d, num)
+        return i_, j_, d
 
 def p1(a):
-    d = 'E'
+    d = 1 # East
     i,j = 0,0
     for d_, num in a:
         i,j, d = parse_dir(d_, num, i, j, d)
-    print(i,j)
     return abs(i) + abs(j)
 
 def rotate_way(w1, w2, steps):
@@ -43,17 +40,11 @@ def rotate_way(w1, w2, steps):
         return -w1, -w2
     elif steps == 3:
         return w2, -w1
-    
 
 def parse_dir_2(d_, num, i, j, w1, w2):
-    if d_ == 'N':
-        return i, j, w1+num, w2
-    elif d_ == 'S':
-        return i, j, w1-num, w2
-    elif d_ == 'E':
-        return i, j, w1, w2+num
-    elif d_ == 'W':
-        return i, j, w1, w2-num
+    if d_ in ['N', 'E', 'S', 'W']:
+        w1_, w2_ = move_dir(w1, w2, dir_map[d_], num)
+        return i, j, w1_, w2_
     elif d_ == 'R':
         steps = num // 90
         new_w1, new_w2 = rotate_way(w1, w2, steps)
