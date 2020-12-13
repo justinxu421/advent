@@ -20,11 +20,13 @@ def check_valid(buses, x):
             return False
     return True
 
+# Chinese Remainder Theorem
 def p2(a):
-    # get the remainders and divisors and sort
+    # get the remainders and divisors and sort by increasing divisor
     buses = [(-i % int(bus), int(bus)) for i, bus in enumerate(a) if bus != 'x']
     buses.sort(key = lambda x: x[1])
-    
+   
+    # loop through from end and generate minimum divisor
     r1, m1 = buses[-1]
     while len(buses) >= 2:
         r2, m2 = buses[-2]
