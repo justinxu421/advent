@@ -1,44 +1,47 @@
 from collections import Counter, defaultdict
 from utils import print_d
 
+# very clean way of getting a 36 bit string, not obscure or hacky at all
+def get_bin_str(num):
+    return list(str(bin(int(num)))[2:].zfill(36))
+
+def get_int_from_bin(bin_num):
+    return int(''.join(bin_num), 2)
+
+def get_address(in_):
+    return in_[4:-1]
+
 def mask_num(mask, bin_num):
     idx = 0
     for idx in range(len(bin_num)):
         if mask[idx] != 'X':
             bin_num[idx] = mask[idx]
-    return int(''.join(bin_num), 2)
+    return get_int_from_bin(bin_num)
 
 def p1(a):
     d = {}
     mask = None
-    for ins, num in a:
-        if ins == 'mask':
+    for in_, num in a:
+        if in_ == 'mask':
             mask = list(num)
         else:
-            address = int(ins[4:-1])
-            bin_num = list(str(bin(int(num)))[2:].zfill(36))
-            d[address] = mask_num(mask, bin_num)
+            address = get_address(in_)
+            d[address] = mask_num(mask, get_bin_str(num))
 
     return sum(d.values())
 
 def mask_num_2(mask, bin_num):
     idx = 0
     for idx in range(len(bin_num)):
-        if mask[idx] == '1':
-            bin_num[idx] = '1'
-        if mask[idx] == 'X':
-            bin_num[idx] = 'X'
+        if mask[idx] != '0':
+            bin_num[idx] = mask[idx]
     return bin_num
 
 import itertools
 def decode(mem_str):
     all_addresses = []
 
-    all_i = []
-    for i, x in enumerate(mem_str):
-        if x == 'X':
-            all_i.append(i)
-
+    all_i = [i for i,x in enumerate(mem_str) if x == 'X']
     for combo in itertools.product(['0','1'], repeat = len(all_i)):
         mem_str_copy = mem_str[:]
         for j, b in enumerate(list(combo)):
@@ -47,19 +50,17 @@ def decode(mem_str):
 
     return all_addresses
 
-
 def p2(a):
     d = {}
     mask = None
-    for ins, num in a:
-        if ins == 'mask':
+    for in_, num in a:
+        if in_ == 'mask':
             mask = list(num)
         else:
-            address = int(ins[4:-1])
-            bin_num = list(str(bin(int(address)))[2:].zfill(36))
+            bin_num = get_bin_str(get_address(in_))
             mem_str = mask_num_2(mask, bin_num)
-
             addresses = decode(mem_str)
+
             for add in addresses:
                 d[add] = int(num)
 
