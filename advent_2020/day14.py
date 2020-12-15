@@ -1,5 +1,6 @@
 from collections import Counter, defaultdict
 from utils import print_d
+import re
 
 # very clean way of getting a 36 bit string, not obscure or hacky at all
 def get_bin_str(num):
@@ -9,7 +10,7 @@ def get_int_from_bin(bin_num):
     return int(''.join(bin_num), 2)
 
 def get_address(in_):
-    return in_[4:-1]
+    return re.search('\[(\w+)\]', in_).group(1)
 
 def mask_num(mask, bin_num):
     idx = 0
@@ -73,7 +74,6 @@ def parse_line(line):
 def main():
     with open('input14.txt') as f:
         a = [parse_line(line) for line in f] 
-        print(a[:10])
 
         print(f'part one: {p1(a)}')
         print(f'part two: {p2(a)}')
