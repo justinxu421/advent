@@ -1,47 +1,33 @@
 from collections import Counter, defaultdict
 from utils import print_d
 
-def p1(a):
-    d = defaultdict(list)
+def run(a, num):
+    d = {}
     
     last = None
-    for i in range(2020):
+    for i in range(num):
         if i < len(a):
             n = a[i]
-            d[n].append(i)
+            d[n] = i
             last = n
         else:
-            if last in d and len(d[last]) > 1:
-                n = d[last][-1] - d[last][-2]
+            # if len(d[last]) > 1:
+            if last in d:
+                n = i - 1 - d[last]
             else:
                 n = 0
-            d[n].append(i)
+            d[last] = i-1
             last = n
         
         i += 1
     
     return n
 
+def p1(a):
+    return run(a, 2020)
+
 def p2(a):
-    d = defaultdict(list)
-    
-    last = None
-    for i in range(30000000):
-        if i < len(a):
-            n = a[i]
-            d[n].append(i)
-            last = n
-        else:
-            if last in d and len(d[last]) > 1:
-                n = d[last][-1] - d[last][-2]
-            else:
-                n = 0
-            d[n].append(i)
-            last = n
-        
-        i += 1
-    
-    return n
+    return run(a, 30000000)
 
 ### insert how to parse line
 def parse_line(line):
