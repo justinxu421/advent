@@ -1,113 +1,70 @@
-from collections import Counter, defaultdict
-from utils import print_d
-
-def print_cube(cube, depth, w_l, w_h, h_l, h_h):
+def print_cube(cube, depth, w, h):
     for x in range(-depth, depth + 1):
         print(x)
-        for y in range(w_l, w_h):
+        for y in range(-depth, w + depth + 1):
             r = ''
-            for z in range(h_l, h_h):
+            for z in range(-b, h + depth + 1):
                 r += cube.get((x, y, z), '.')
             print(r)
         print()
 
-def check_neighbors(cube, x, y, z):
-    total = 0
-    for i in range(-1, 2):
-        for j in range(-1, 2):
-            for k in range(-1, 2):
-                if (i,j,k) == (0,0,0):
-                    continue
-                x_, y_, z_ = x+i, y+j, z+k
-                if cube.get((x_,y_,z_)) == '#':
-                    total += 1
-    return total
+def check_neighbors(cube, coord):
+    x,y,z = coord
+    coords = [(a,b,c) for a in range(-1, 2) for b in range(-1, 2) for c in range(-1, 2) if (a,b,c) != (0,0,0)]
+    return sum(1 for a,b,c in coords if cube.get((x+a,y+b,z+c)) == '#')
+
+def get_next(cube, coord, cn):
+    n = cn(cube, coord)
+    if cube.get(coord) == '#':
+        if n in [2,3]:
+            return '#'
+        else:
+            return '.'
+    else:
+        if n == 3:
+            return '#'
+        else:
+            return '.'
 
 def p1(a):
     cube = {}
     
-    w, h = len(a), len(a[0])
-
-    for i in range(w):
-        for j in range(h):
+    w_, h_ = len(a), len(a[0])
+    for i in range(w_):
+        for j in range(h_):
             cube[(0,i,j)] = a[i][j]
 
-    depth = 1
-    w_l, w_h = -1, w+1
-    h_l, h_h = -1, h+1
-
-    for i in range(6):
+    for depth in range(1,7):
         new_cube = {}
         for x in range(-depth, depth + 1):
-            for y in range(w_l, w_h):
-                for z in range(h_l, h_h):
-                    n = check_neighbors(cube, x, y, z)
-                    if cube.get((x, y, z)) == '#':
-                        if n in [2,3]:
-                            new_cube[x,y,z] = '#'
-                        else:
-                            new_cube[x,y,z] = '.'
-                    else:
-                        if n == 3:
-                            new_cube[x,y,z] = '#'
-                        else:
-                            new_cube[x,y,z] = '.'
+            for y in range(-depth, w_ + depth):
+                for z in range(-depth, h_ + depth):
+                    new_cube[x,y,z] = get_next(cube, (x,y,z), check_neighbors)
         cube = new_cube
-        # increment
-        depth += 1
-        w_l, w_h = w_l-1, w_h + 1
-        h_l, h_h = h_l-1, h_h+1
 
     return sum(1 for v in cube.values() if v == '#')
 
-def check_neighbors_4d(cube, w, x, y, z):
-    total = 0
-    for l in range(-1, 2):
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                for k in range(-1, 2):
-                    if (l,i,j,k) == (0,0,0,0):
-                        continue
-                    w_, x_, y_, z_ = w+l, x+i, y+j, z+k
-                    if cube.get((w_,x_,y_,z_)) == '#':
-                        total += 1
-    return total
+def check_neighbors_4d(cube, coord):
+    w,x,y,z = coord
+    coords = [(a,b,c,d) for a in range(-1, 2) for b in range(-1, 2) for c in range(-1, 2) for d in range(-1, 2) if (a,b,c,d) != (0,0,0,0)]
+    return sum(1 for a,b,c,d in coords if cube.get((w+a,x+b,y+c,z+d)) == '#')
 
-def p2(a):
+def p2(arr):
     cube = {}
     
-    w, h = len(a), len(a[0])
+    w_, h_ = len(arr), len(arr[0])
+    for i in range(w_):
+        for j in range(h_):
+            cube[(0,0,i,j)] = arr[i][j]
 
-    for i in range(w):
-        for j in range(h):
-            cube[(0,0,i,j)] = a[i][j]
-
-    d1, d2 = 1, 1
-    w_l, w_h = -1, w+1
-    h_l, h_h = -1, h+1
-
-    for i in range(6):
+    for d in range(1, 7):
         new_cube = {}
-        for w in range(-d1, d1+1):
-            for x in range(-d2, d2+1):
-                for y in range(w_l, w_h):
-                    for z in range(h_l, h_h):
-                        n = check_neighbors_4d(cube, w ,x, y, z)
-                        if cube.get((w, x, y, z)) == '#':
-                            if n in [2,3]:
-                                new_cube[w,x,y,z] = '#'
-                            else:
-                                new_cube[w,x,y,z] = '.'
-                        else:
-                            if n == 3:
-                                new_cube[w,x,y,z] = '#'
-                            else:
-                                new_cube[w,x,y,z] = '.'
+        for w in range(-d, d+1):
+            for x in range(-d, d+1):
+                for y in range(-d, w_+d):
+                    for z in range(-d, h_+d):
+                        new_cube[w,x,y,z] = get_next(cube, (w,x,y,z), check_neighbors_4d)
         cube = new_cube
-        # increment
-        d1, d2 = d1+1, d2+1
-        w_l, w_h = w_l-1, w_h + 1
-        h_l, h_h = h_l-1, h_h+1
 
     return sum(1 for v in cube.values() if v == '#')
 
@@ -117,12 +74,10 @@ def parse_line(line):
 
 def main():
     with open('input17.txt') as f:
-    #with open('test.txt') as f:
-        a = [parse_line(line) for line in f]
-        print(a[:10])
+        arr = [parse_line(line) for line in f]
 
-        print(f'part one: {p1(a)}')
-        print(f'part two: {p2(a)}')
+        print(f'part one: {p1(arr)}')
+        print(f'part two: {p2(arr)}')
 
 if __name__ == "__main__":
     main()
