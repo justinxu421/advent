@@ -21,17 +21,13 @@ def evaluate(eq, i, f):
     return f(string), i
 
 def naive(string):
-    a = int(string[0])
-   
-    i = 1
-    while i < len(string):
-        b = int(string[i+1])
-        if string[i] == '*':
-            a *= b
-        elif string[i] == '+':
-            a += b
-        i += 2
-    return a
+    if len(string) == 1:
+        return int(string[0])
+
+    if string[-2] == '*':
+        return naive(string[:-2]) * int(string[-1])
+    elif string[-2] == '+':
+        return naive(string[:-2]) + int(string[-1])
 
 def p1(a):
     total = 0
@@ -41,17 +37,14 @@ def p1(a):
 
 # + takes precendence over *
 def precedence(string):
-    a = int(string[0])
+    if len(string) == 1:
+        return int(string[0])
 
-    i = 1
-    while i < len(string):
-        b = int(string[i+1])
-        if string[i] == '*':
-            return a * precedence(string[i+1:]) 
-        elif string[i] == '+':
-            a += b
-        i += 2
-    return a
+    if string[-2] == '*':
+        return precedence(string[:-2]) * int(string[-1])
+    elif string[-2] == '+':
+        string = string[:-3] + [int(string[-3]) + int(string[-1])]
+        return precedence(string)
 
 def p2(a):
     total = 0
