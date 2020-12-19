@@ -12,6 +12,7 @@ def match(message, pattern, rules):
     x = pattern[-1]
     # alpha character
     if type(rules[x]) == str:
+        #print(x, rules[x], message)
         # exit if character doesn't match
         if rules[x] != message[-1]:
             return False
@@ -42,17 +43,8 @@ def p1(a, text):
     return sum(match(message, ['0'], rules) for message in text)
 
 def get_rules_2(a):
-    rules = {}
-    for key, line in a:
-        if '"' in line:
-            rules[key] = line[1:-1]
-        elif '|' in line:
-            r1, r2 = line.split(' | ')
-            rules[key] = (r1.split(), r2.split())
-        else:
-            rules[key] = [line.split()]
-    
     # replace rules to insert looping
+    rules = get_rules(a) 
     rules['8'] = [['42'], ['42', '8']]
     rules['11'] = [['42', '31'], ['42', '11', '31']]
     return rules
@@ -60,6 +52,7 @@ def get_rules_2(a):
 def p2(a, text):
     rules = get_rules_2(a) 
     return sum(match(message, ['0'], rules) for message in text)
+    
 
 ### insert how to parse line
 def parse_line(line):
@@ -67,7 +60,6 @@ def parse_line(line):
 
 def main():
     with open('input19.txt') as f:
-    #with open('test.txt') as f:
         rules, text = f.read().split('\n\n')
         a = [parse_line(line) for line in rules.strip().split('\n')] 
         text = text.strip().split('\n')
