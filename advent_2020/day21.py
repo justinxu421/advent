@@ -7,7 +7,7 @@ def get_allergen_dict(a):
     for ingredients, allergens in a:
         for a_ in allergens:
             if a_ not in d:
-                d[a_] = ingredients
+                d[a_] = ingredients.copy()
             else:
                 d[a_] = ingredients & d[a_]
     return d
@@ -15,16 +15,14 @@ def get_allergen_dict(a):
 def p1(a):
     a.sort(key = lambda x: len(x[1])) 
     d = get_allergen_dict(a)
-
-    total = 0
-    # loop through and remove ingredients in allergen list
-    for ingredients, allergens in a:
-        possible = set(ingredients)
-        for key in d:
-            possible -= d[key]
-        total += len(possible)
     
-    return total
+    # loop through and or together to get removable ingredients
+    remove = set()
+    for v in d.values():
+        remove |= v
+    
+    ingredients, allergens = zip(*a)
+    return sum(len(ing - remove) for ing in ingredients)
 
 # find the first key with length ingredient list
 def find_key(d, parsed):
@@ -32,7 +30,7 @@ def find_key(d, parsed):
         if key not in parsed and len(d[key]) == 1:
             parsed[key] = d[key]
             return key
-    return False
+    return None
 
 def p2(a):
     a.sort(key = lambda x: len(x[1])) 
@@ -41,16 +39,24 @@ def p2(a):
     parsed = {}
     for _ in range(10):
         key = find_key(d, parsed)
-
+        
         if not key:
             break
+        
+        # remove from ingredients and reconstruct allergen dict
+        for ingredients, allergens in a:
+            ingredients -= parsed[key]
+            allergens -= set([key])
+        d = get_allergen_dict(a)
 
+        '''
         # remove deterministic ingredient for each allergen and loop 
         for k2 in d:
             if k2 != key:
                 d[k2] -= parsed[key]
-    
-    return ','.join([str(x[1])[1:-1] for x in sorted(list(parsed.items()), key = lambda x: x[0])])
+        '''
+
+    return ','.join([str(x[1])[2:-2] for x in sorted(list(parsed.items()), key = lambda x: x[0])])
 
 
 ### insert how to parse line
