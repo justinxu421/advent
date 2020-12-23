@@ -54,7 +54,6 @@ def p2(a, b):
 
 def main():
     with open('input22.txt') as f:
-    #with open('test.txt') as f:
         a, b = f.read().strip().split('\n\n')
         a = [int(x) for x in a.strip().split('\n')[1:]]
         b = [int(x) for x in b.strip().split('\n')[1:]]
