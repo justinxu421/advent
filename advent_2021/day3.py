@@ -29,10 +29,10 @@ def p2(a):
         counts = defaultdict(list)
         for x in co2:
             counts[x[i]].append(x)
-        if len(counts["0"]) <= len(counts["1"]):
-            co2 = counts["0"]
-        else:
+        if len(counts["1"]) < len(counts["0"]):
             co2 = counts["1"]
+        else:
+            co2 = counts["0"]
         if len(co2) == 1:
             break
 
