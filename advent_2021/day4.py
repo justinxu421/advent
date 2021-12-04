@@ -1,7 +1,7 @@
 from collections import Counter, defaultdict
 import numpy as np
 
-def find_bingo(board, marked):
+def find_bingo(marked):
     for i in range(5):
         if marked[i].sum() == 5:
             return True
@@ -38,7 +38,7 @@ def p1(a):
     for num in nums:
         for board, marked in boards.values():
             mark(board, marked, num)
-            if find_bingo(board, marked):
+            if find_bingo(marked):
                 return get_score(board, marked, num) 
 
 
@@ -49,7 +49,7 @@ def p2(a):
     for num in nums:
         for idx, (board, marked) in enumerate(boards.values()):
             mark(board, marked, num)
-            if find_bingo(board, marked):
+            if find_bingo(marked):
                 not_solved.discard(idx)
                 if len(not_solved) == 0:
                     return get_score(board, marked, num)
