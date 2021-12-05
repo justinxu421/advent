@@ -69,8 +69,14 @@ def p2(a):
 
     return sum(1 for x in board.values() if x >= 2)
 
+def run(file):
+    with open(file) as f:
+        a = [x.split(" -> ") for x in f.read().splitlines()]
+        print(f"Part 1: {p1(a)}")
+        print(f"Part 2: {p2(a)}")
 
-with open("input5.txt") as f:
-    a = [x.split(" -> ") for x in f.read().splitlines()]
-    print(p1(a))
-    print(p2(a))
+print('Run test cases')
+run("test.txt")
+print()
+print('Run real cases')
+run("input5.txt")
