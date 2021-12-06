@@ -1,4 +1,5 @@
 from collections import Counter, defaultdict
+from functools import cache
 import numpy as np
 
 def p1(a):
@@ -11,25 +12,22 @@ def p1(a):
             timers = np.concatenate((timers, np.array([8] * zeros.sum())))
     return len(timers)
 
-def recurse(left, cache):
+@cache
+def recurse(left):
     orig = left
     if orig < 0:
         return 0
-    elif orig in cache:
-        return cache[orig]
     else:
-        total = 1 + recurse(left - 9, cache)
+        total = 1 + recurse(left - 9)
         while left >= 7:
             left -= 7
-            total += 1 + recurse(left - 9, cache)
-        cache[orig] = total
-        return cache[orig]
+            total += 1 + recurse(left - 9)
+        return total
 
 def p2(a):
     total = 0
-    cache = {}
     for num in a:
-        x = recurse(256 - num - 1, cache)
+        x = recurse(256 - num - 1)
         total += 1 + x
     return total
 
