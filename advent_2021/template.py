@@ -17,8 +17,11 @@ def run(file):
         print(f"Part 2: {p2(a)}")
 
 
-print('Run test cases')
-run("test.txt")
-print()
-print('Run real cases')
-run("input1.txt")
+test_files = [
+    "test.txt",
+    "input1.txt",
+]
+for file in test_files:
+    print(f"Run cases for {file}")
+    run(file)
+    print()
