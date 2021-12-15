@@ -1,8 +1,9 @@
 from collections import Counter, defaultdict
 import numpy as np
+from utils import *
 
 def process_flip(paper, fold):
-    new_points = {}
+    new_points = set()
     f = fold.split('fold along ')[1].split('=')
     dir_, num = f
     num = int(num)
@@ -10,17 +11,13 @@ def process_flip(paper, fold):
     if dir_ == 'y':
         for x, y in paper:
             if y > num:
-                y_ = num - (y - num)
-                new_points[(x,y_)] = '#'
-            else:
-                new_points[(x,y)] = '#'
+                y = num - (y - num)
+            new_points.add((x,y))
     elif dir_ == 'x':
         for x, y in paper:
             if x > num:
-                x_ = num - (x - num)
-                new_points[(x_,y)] = '#'
-            else:
-                new_points[(x,y)] = '#'
+                x = num - (x - num)
+            new_points.add((x,y))
     return new_points
 
 def p1(a, b):
@@ -41,21 +38,7 @@ def p2(a, b):
     for fold in b:
         paper = process_flip(paper, fold)
 
-    paper_grid = {(y,x): '#' for (x,y) in paper}
-    def print_grid(grid):
-        rows = [x[0] for x in grid]
-        cols = [x[1] for x in grid]
-        min_col, max_col = min(cols), max(cols)
-        min_row, max_row = min(rows), max(rows)
-
-        for row in range(min(rows), max(rows)+1):
-            r_str = [' ']*(max_col-min_col+1)
-            for point in grid:
-                if point[0] == row:
-                    r_str[point[1] - min_col] = str(grid[point])
-            print(''.join(r_str))
-    
-    print_grid(paper_grid)
+    print_grid(paper, transpose = False)
 
 
 def run(file):
