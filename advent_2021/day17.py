@@ -33,10 +33,9 @@ def p2(a):
 
 
     x_ = int(np.sqrt(2 * x_min))
-    y_ = int((abs(y_min) - 1) * abs(y_min) / 2)
     total = 0
     for xv in range(x_, x_max + 1):
-        for yv in range(y_min, y_):
+        for yv in range(y_min, -y_min + 1):
             if check(xv, yv, x_min, x_max, y_min, y_max):
                 total += 1
     return total 
