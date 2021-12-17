@@ -31,11 +31,12 @@ def p2(a):
     x_min, x_max = map(int, x[2:].split('..'))
     y_min, y_max = map(int, y[3:].split('..'))
 
-    max_y = int((abs(y_min) - 1) * abs(y_min) / 2)
 
+    x_ = int(np.sqrt(2 * x_min))
+    y_ = int((abs(y_min) - 1) * abs(y_min) / 2)
     total = 0
-    for xv in range(1, x_max + 1):
-        for yv in range(y_min, max_y):
+    for xv in range(x_, x_max + 1):
+        for yv in range(y_min, y_):
             if check(xv, yv, x_min, x_max, y_min, y_max):
                 total += 1
     return total 
