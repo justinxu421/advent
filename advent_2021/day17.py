@@ -13,15 +13,17 @@ def p1(a):
 
 def check(xv, yv, x_min, x_max, y_min, y_max):
     x, y = 0, 0
-    while x <= x_max + 1 and y >= y_min + 1:
-        x += xv
-        y += yv
+
+    for step in range(2 * abs(y_min) + 1):
+        y = (yv + yv - step) * (step + 1) / 2
+        if step < xv:
+            x = (xv + xv - step) * (step + 1) / 2
+        else:
+            x = xv * (xv + 1) / 2
+
+
         if x_min <= x <= x_max and y_min <= y <= y_max:
             return True 
-
-        if xv > 0: xv -= 1
-        elif xv < 0: xv += 1
-        yv -= 1
 
     return False
 
