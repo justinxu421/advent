@@ -65,7 +65,6 @@ def explode_right(cur, explode_val):
 def check_explode(val, depth):
     if val.left and val.right:
         if depth == 4:
-            # print('explode', val)
             return "explode"
         elif check_explode(val.left, depth + 1) == True:
             return True
@@ -103,7 +102,6 @@ def check_reduce(val):
             return True
     else:
         if val.data >= 10:
-            # print('reduce', val.data)
             val_left = val.data // 2
             val_right = val.data - val_left
             new_tree = get_tree([val_left, val_right], val.parent)
