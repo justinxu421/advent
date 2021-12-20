@@ -17,6 +17,15 @@ def print_points(grid, transpose = False):
                 r_str[point[1] - min_col] = str(grid[point])
         print(''.join(r_str))
 
+def convert(grid):
+    points = set()
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i,j] == '#':
+                points.add((i,j))
+    return points
+             
+    
 def print_grid(points, transpose = False):
     x = [p[0] for p in points]
     y = [p[1] for p in points]
