@@ -4,6 +4,7 @@ from utils import print_grid, convert
 
 
 def enhance(a, canvas, pad):
+    # we should only pad (2,2) but for making the convolutions valid, pad an extra layer
     canvas = np.pad(canvas, (3, 3), constant_values=pad)
     new_canvas = np.full(canvas.shape, ".", dtype="str")
 
@@ -16,15 +17,19 @@ def enhance(a, canvas, pad):
             )
             num = int("".join(pixels), 2)
             new_canvas[i, j] = a[num]
+    # unpad the extra layer
     return new_canvas[1:-1, 1:-1]
 
+
+# the next pad will either be the 0th or last index of 'a'
+# This is cause all these entries will either be ......... or ######### which correspond to 0/512
 def get_next_pad(a, pad):
     if pad == ".":
         return a[0]
     else:
         return a[-1]
 
-    
+
 def p1(a, b):
     canvas = b
 
