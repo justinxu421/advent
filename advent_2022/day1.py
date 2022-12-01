@@ -1,12 +1,10 @@
-import numpy as np
-
-
-def get_cals(a): 
+def get_cals(a):
     all_cals = []
     for x in a:
         cals = sum(list(map(int, x.split())))
         all_cals.append(cals)
     return all_cals
+
 
 def p1(a):
     all_cals = get_cals(a)
