@@ -1,21 +1,20 @@
 import numpy as np
 
 
-def p1(a):
-    max = -1
-    for x in a:
-        cals = sum(list(map(int, x.split())))
-        if cals > max:
-            max = cals
-    return max
-
-
-def p2(a):
+def get_cals(a): 
     all_cals = []
     for x in a:
         cals = sum(list(map(int, x.split())))
         all_cals.append(cals)
+    return all_cals
 
+def p1(a):
+    all_cals = get_cals(a)
+    return max(all_cals)
+
+
+def p2(a):
+    all_cals = get_cals(a)
     top_3 = sorted(all_cals)[-3:]
     return sum(top_3)
 
