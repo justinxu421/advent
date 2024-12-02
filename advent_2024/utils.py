@@ -3,6 +3,9 @@ import argparse
 from aocd import submit
 
 class AbstractDaySubmitter(ABC):
+    def __init__(self) -> None:
+        super().__init__()
+
     @property
     def file_name(self):
         return f"input{self.day()}.txt"
@@ -57,10 +60,13 @@ class AbstractDaySubmitter(ABC):
 
         parser = argparse.ArgumentParser(prog="myprogram")
         parser.add_argument(
-            "-sa", "--submita", action="store_true", default=False
+            "-sa", "--submita", action="store_true", default=False, help="Submit part a"
         )
         parser.add_argument(
-            "-sb", "--submitb", action="store_true", default=False
+            "-sb", "--submitb", action="store_true", default=False, help="Submit part b"
+        )
+        parser.add_argument(
+            "-rt", "--runtest", action="store_true", default=False, help="Only run on test.txt"
         )
         args = parser.parse_args()
 
@@ -69,6 +75,8 @@ class AbstractDaySubmitter(ABC):
 
         elif args.submitb:
             self.submit_part_b()
+        elif args.runtest:
+            self.run("test.txt")
         else:
             test_files = [
                 "test.txt",
