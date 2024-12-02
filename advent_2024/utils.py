@@ -64,16 +64,17 @@ class AbstractDaySubmitter(ABC):
         )
         args = parser.parse_args()
 
-        test_files = [
-            "test.txt",
-            self.file_name,
-        ]
-        for file in test_files:
-            self.run(file)
-
         if args.submita:
             self.submit_part_a()
 
-        if args.submitb:
+        elif args.submitb:
             self.submit_part_b()
+        else:
+            test_files = [
+                "test.txt",
+                self.file_name,
+            ]
+            for file in test_files:
+                self.run(file)
+
 
