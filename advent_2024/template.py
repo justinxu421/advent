@@ -1,27 +1,24 @@
 from collections import Counter, defaultdict
+
 import numpy as np
+from utils import AbstractDaySubmitter
+
+class DaySubmitter(AbstractDaySubmitter):
+    def day(self):
+        return 1
+
+    def pa(self, a):
+        pass
 
 
-def p1(a):
-    pass
+    def pb(self, a):
+        pass
 
 
-def p2(a):
-    pass
+    def parse_file(self, file):
+        with open(file) as f:
+            a = [x.split() for x in f.read().splitlines()]
+            return a
 
-
-def run(file):
-    with open(file) as f:
-        a = [x for x in f.read().splitlines()]
-        print(f"Part 1: {p1(a)}")
-        print(f"Part 2: {p2(a)}")
-
-
-test_files = [
-    "test.txt",
-    "input1.txt",
-]
-for file in test_files:
-    print(f"Run cases for {file}")
-    run(file)
-    print()
+if __name__ == "__main__":
+     DaySubmitter().main()
