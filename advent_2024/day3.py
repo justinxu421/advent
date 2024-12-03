@@ -58,7 +58,6 @@ class DaySubmitter(AbstractDaySubmitter):
                 on = True
             elif on == True:
                 x, y = val.strip('mul(').strip(')').split(',')
-                print(x, y)
                 total += int(x) * int(y)
 
         return total
