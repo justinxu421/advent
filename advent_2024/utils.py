@@ -60,13 +60,13 @@ class AbstractDaySubmitter(ABC):
 
         parser = argparse.ArgumentParser(prog="myprogram")
         parser.add_argument(
-            "-sa", "--submita", action="store_true", default=False, help="Submit part a"
+            "-a", "--submita", action="store_true", default=False, help="Submit part a"
         )
         parser.add_argument(
-            "-sb", "--submitb", action="store_true", default=False, help="Submit part b"
+            "-b", "--submitb", action="store_true", default=False, help="Submit part b"
         )
         parser.add_argument(
-            "-rt", "--runtest", action="store_true", default=False, help="Only run on test.txt"
+            "-t", "--runtest", action="store_true", default=False, help="Only run on test.txt"
         )
         args = parser.parse_args()
 
