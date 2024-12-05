@@ -12,63 +12,23 @@ class DaySubmitter(AbstractDaySubmitter):
     def parse_file(self, file):
         with open(file) as f:
             a, b = f.read().split("\n\n")
-            a = [list(map(int, x.split("|"))) for x in a.splitlines()]
-            b = [list(map(int, x.split(","))) for x in b.splitlines()]
-            return a, b
+            all_rules = [list(map(int, x.split("|"))) for x in a.splitlines()]
+            pages_list  = [list(map(int, x.split(","))) for x in b.splitlines()]
+            return all_rules, pages_list
 
-    def check_pages(self, pages, rules, reverse_rules):
-        seen = set()
-        # go in reverse order
-        for page in pages:
-            seen.add(page)
-            if page in reverse_rules:
-                befores = rules[page]
-                # violation of rule
-                if len(seen & befores) > 0:
-                    return 0
-
-        seen = set()
-        for page in reversed(pages):
-            seen.add(page)
-            if page in rules:
-                afters = reverse_rules[page]
-                # violation of rule
-                if len(seen & afters) > 0:
-                    return 0
-        return pages[len(pages) // 2]
-
-    def parse_rules(self, a):
+    def parse_rules(self, all_rules):
         # mapping from before page to set of after pages
         rules = defaultdict(set)
-        reverse_rules = defaultdict(set)
 
-        for before, after in a:
+        for before, after in all_rules:
             rules[before].add(after)
-            reverse_rules[after].add(before)
-        return rules, reverse_rules
+        return rules
 
-    def pa(self, lst):
-        a, b = lst
-        rules, reverse_rules = self.parse_rules(a)
-
-        total = 0
-        for pages in b:
-            middle = self.check_pages(pages, rules, reverse_rules)
-            total += middle
-
-        return total
-
-    def reorder(self, pages: list, order: list):
-        indices = []
-        for page in pages:
-            indices.append(order.index(page))
-        indices.sort()
-
-        middle_index = indices[len(indices) // 2]
-        return order[middle_index]
-
-    def topo_sort(self, rules, reverse_rules):
-        start = list(set(rules.keys()) - set(reverse_rules.keys()))[0]
+    def topo_sort(self, valid_rules):
+        before_keys = set(before for before, _ in valid_rules)
+        after_keys = set(after for _, after in valid_rules)
+        start = list(before_keys - after_keys)[0]
+        rules = self.parse_rules(valid_rules)
 
         order = []
         visited = set()
@@ -82,27 +42,45 @@ class DaySubmitter(AbstractDaySubmitter):
         topo_helper(start)
         return order[::-1]
 
-    def get_valid_order(self, a, pages):
+    def get_valid_order(self, all_rules, pages):
         valid_rules = []
-        for before, after in a:
+        for before, after in all_rules:
             pages_set = set(pages)
             if before in pages_set and after in pages_set:
                 valid_rules.append([before, after])
 
-        rules, reverse_rules = self.parse_rules(valid_rules)
-        return self.topo_sort(rules, reverse_rules)
+        return self.topo_sort(valid_rules)
+
+    def pa(self, lst):
+        all_rules, pages_list = lst
+
+        total = 0    
+        for pages in pages_list:
+            order = self.get_valid_order(all_rules, pages)
+            if order == pages:
+                total += pages[len(pages) // 2]
+
+        return total
+
+    def reorder(self, pages: list, order: list):
+        indices = []
+        for page in pages:
+            indices.append(order.index(page))
+        indices.sort()
+
+        middle_index = indices[len(indices) // 2]
+        return order[middle_index]
 
     def pb(self, lst):
-        a, b = lst
-        rules, reverse_rules = self.parse_rules(a)
+        all_rules, pages_list = lst
 
         total = 0
-        for pages in b:
-            middle = self.check_pages(pages, rules, reverse_rules)
-            if middle == 0:
-                order = self.get_valid_order(a, pages)
-                new_middle = self.reorder(pages, order)
-                total += new_middle
+        for pages in pages_list:
+            order = self.get_valid_order(all_rules, pages)
+            if order == pages:
+                continue
+            new_middle = self.reorder(pages, order)
+            total += new_middle
 
         return total
 
