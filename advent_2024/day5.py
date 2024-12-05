@@ -66,25 +66,23 @@ class DaySubmitter(AbstractDaySubmitter):
 
         middle_index = indices[len(indices) // 2]
         return order[middle_index]
-    
+
     def topo_sort(self, rules, reverse_rules):
         start = list(set(rules.keys()) - set(reverse_rules.keys()))[0]
-        # topo sort rules
-        order = []
-        stack = []
-        visited = set()
-        q = [start]
-        while q:
-            node = q.pop()
-            if node not in visited:
-                visited.add(node)
-                q.extend(rules[node])
-                while stack and node not in rules[stack[-1]]: # new stuff here!
-                    order.append(stack.pop())
-                stack.append(node)
-        return stack + order[::-1]
 
-    def get_valid_rules(self, a, pages):
+        order = []
+        visited = set()
+        def topo_helper(node):
+            for neighbor in rules[node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    topo_helper(neighbor)
+            order.append( node)
+
+        topo_helper(start)
+        return order[::-1]
+
+    def get_valid_order(self, a, pages):
         valid_rules = []
         for before, after in a:
             pages_set = set(pages)
@@ -102,7 +100,7 @@ class DaySubmitter(AbstractDaySubmitter):
         for pages in b:
             middle = self.check_pages(pages, rules, reverse_rules)
             if middle == 0:
-                order = self.get_valid_rules(a, pages)
+                order = self.get_valid_order(a, pages)
                 new_middle = self.reorder(pages, order)
                 total += new_middle
 
