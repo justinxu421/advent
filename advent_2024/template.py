@@ -14,10 +14,10 @@ class DaySubmitter(AbstractDaySubmitter):
             a = [x.split() for x in f.read().splitlines()]
             return a
 
-    def pa(self, lst):
+    def pa(self, rows):
         pass
 
-    def pb(self, lst):
+    def pb(self, rows):
         pass
 
 
