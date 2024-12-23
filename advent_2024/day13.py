@@ -7,7 +7,7 @@ from utils import AbstractDaySubmitter
 
 class DaySubmitter(AbstractDaySubmitter):
     def day(self):
-        return 1
+        return 13
 
     def parse_file(self, file):
         with open(file) as f:
