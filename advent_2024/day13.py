@@ -31,8 +31,13 @@ class DaySubmitter(AbstractDaySubmitter):
         
         sections = [self.parse_line(line) for line in content.split("\n\n")]
         return sections
- # Try parsing as space-separated values
+
     def solve_game(self, row):
+        """
+        Given the input row, this function will try all combinations of presses
+        and return the cost of the combination that earns the prize. If no combination
+        earns the prize, it will return 0.
+        """
         ax, ay, bx, by, px, py = row
         for b_press in range(100):
             bx_cost = b_press * bx
@@ -53,19 +58,17 @@ class DaySubmitter(AbstractDaySubmitter):
 
     def solve_game_b(self, row):
         ax, ay, bx, by, px, py = row
-        px += REWARD_CHANGE 
-        py += REWARD_CHANGE 
+        px, py = px + REWARD_CHANGE, py + REWARD_CHANGE
+
         for b_press in range(REWARD_CHANGE):
             bx_cost = b_press * bx
             by_cost = b_press * by
 
             a_presses_x = (px - bx_cost) / ax
             a_presses_y = (py - by_cost) / ay
-            if a_presses_x < 0 or a_presses_y < 0:
-                break
             if a_presses_x.is_integer() and a_presses_x == a_presses_y:
                 return b_press * COST_B + int(a_presses_x) * COST_A
-        # tried all press amounst and didn't get an answer
+
         return 0
 
     def pb(self, rows):
