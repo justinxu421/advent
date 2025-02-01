@@ -1,13 +1,22 @@
-from collections import Counter, defaultdict
-
-import numpy as np
-
 from typing import Union
+import numpy as np
 from utils import AbstractDaySubmitter
 
-COST_A = 3
-COST_B = 1
-REWARD_CHANGE = 10000000000000
+"""
+Advent of Code 2024 Day 13: Button Pressing Game
+
+Each puzzle input describes a game with:
+- Button A that moves (ax,ay) per press, costs 3 coins
+- Button B that moves (bx,by) per press, costs 1 coin
+- Target prize at coordinates (px,py)
+
+Part 1: Find minimum cost to reach prize
+Part 2: Same but prize coordinates are increased by 10^13
+"""
+
+COST_A = 3  # Cost per press of button A
+COST_B = 1  # Cost per press of button B
+REWARD_CHANGE = 10**13  # Amount prize moves in part 2
 class DaySubmitter(AbstractDaySubmitter):
     def day(self):
         return 13
@@ -34,20 +43,28 @@ class DaySubmitter(AbstractDaySubmitter):
 
     def solve_game(self, row):
         """
-        Given the input row, this function will try all combinations of presses
-        and return the cost of the combination that earns the prize. If no combination
-        earns the prize, it will return 0.
+        Solve for minimum cost to reach prize coordinates.
+        Uses linear algebra to find exact solution rather than brute force.
+        
+        Returns cost of optimal solution, or 0 if no solution exists.
         """
         ax, ay, bx, by, px, py = row
-        for b_press in range(100):
-            bx_cost = b_press * bx
-            by_cost = b_press * by
-
-            a_presses_x = (px - bx_cost) / ax
-            a_presses_y = (py - by_cost) / ay
-            if a_presses_x.is_integer() and a_presses_x == a_presses_y:
-                return b_press * COST_B + int(a_presses_x) * COST_A
-        # tried all press amounst and didn't get an answer
+        
+        # System of equations:
+        # ax*a + bx*b = px
+        # ay*a + by*b = py
+        # Where a,b are number of button presses
+        
+        det = ax*by - ay*bx
+        if det == 0:  # No unique solution
+            return 0
+            
+        # Solve using Cramer's rule
+        a = (px*by - py*bx) / det
+        b = (ax*py - ay*px) / det
+        
+        if a >= 0 and b >= 0 and a.is_integer() and b.is_integer():
+            return int(a) * COST_A + int(b) * COST_B
         return 0
 
     def pa(self, rows):
@@ -57,19 +74,11 @@ class DaySubmitter(AbstractDaySubmitter):
         return total
 
     def solve_game_b(self, row):
+        """Same as solve_game but with shifted prize coordinates"""
         ax, ay, bx, by, px, py = row
-        px, py = px + REWARD_CHANGE, py + REWARD_CHANGE
-
-        for b_press in range(REWARD_CHANGE):
-            bx_cost = b_press * bx
-            by_cost = b_press * by
-
-            a_presses_x = (px - bx_cost) / ax
-            a_presses_y = (py - by_cost) / ay
-            if a_presses_x.is_integer() and a_presses_x == a_presses_y:
-                return b_press * COST_B + int(a_presses_x) * COST_A
-
-        return 0
+        return self.solve_game([ax, ay, bx, by, 
+                              px + REWARD_CHANGE, 
+                              py + REWARD_CHANGE])
 
     def pb(self, rows):
         total = 0
